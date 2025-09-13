@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-// import { UsersModule } from './users/users.module';
+import { UsersModule } from './users/users.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -17,8 +17,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       database: process.env.LOCAL_DB_NAME,
       autoLoadEntities: true,
       synchronize: true, // only for dev
+      logging: true,
     }),
-    // UsersModule,
+    UsersModule,
   ],
   controllers: [],
   providers: [],

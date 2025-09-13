@@ -1,0 +1,123 @@
+
+
+
+
+git checkout -b add/ci-workflow
+[main]
+    tags:
+      - 'v1.0.0'
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  deps-cache:
+    name: Setup dependencies cache
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - name: Cache npm
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+      - name: Install dependencies
+        run: npm ci
+
+  lint-format:
+    name: Lint & Format check
+    runs-on: macos-latest
+    needs: deps-cache
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+      - name: Run lint
+        run: npm run lint
+      - name: Run format check
+        run: npm run format:check
+
+  test:
+    name: Test (matrix)
+    runs-on: macos-latest
+    needs: deps-cache
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [16, 18, 20]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+      - name: Run tests + coverage
+        run: npm test -- --coverage
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-${{ matrix.node-version }}
+          path: coverage
+
+  security-scan:
+    name: Security Scanning
+    runs-on: macos-latest
+    needs: deps-cache
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - run: npm ci --production
+      - name: Audit production dependencies
+        run: npm audit --production --audit-level=high
+
+  build:
+    name: Build
+    runs-on: macos-latest
+    needs: [lint-format, test, security-scan]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: 'npm'
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+      - name: Build
+        run: npm run build
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+  release:
+    name: Release (tags)
+    runs-on: macos-latest
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+      - name: Create GitHub release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: dist
+          generateReleaseNotes: true

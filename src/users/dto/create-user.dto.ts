@@ -1,7 +1,14 @@
-import { IsEmail, IsNotEmpty, IsString, MinLength, Matches, IsOptional } from 'class-validator';
+import {
+  IsEmail,
+  IsNotEmpty,
+  IsString,
+  MinLength,
+  Matches,
+  IsOptional,
+} from 'class-validator';
 import { Match } from 'src/common/decorators/match.decorator';
 // import { Match } from 'src/common/decorators/match.decorator';
-// 
+//
 export class CreateUserDto {
   @IsNotEmpty()
   @IsString()
@@ -13,7 +20,7 @@ export class CreateUserDto {
 
   @IsOptional()
   @IsString()
-  googleId?: string; 
+  googleId?: string;
 
   @IsNotEmpty()
   @IsString()

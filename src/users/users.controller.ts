@@ -1,8 +1,16 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Headers, Res } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
-import { Response } from 'express'; 
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { UsersService } from './users.service';
 @Controller('users')
@@ -13,7 +21,6 @@ export class UsersController {
   create(@Body() createUserDto: CreateUserDto) {
     return this.usersService.create(createUserDto);
   }
- 
 
   // @UseGuards(JwtAuthGuard)
   @Get()
@@ -21,14 +28,12 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
- 
-
   @UseGuards(JwtAuthGuard)
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.usersService.findOne(+id);
   }
- 
+
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {

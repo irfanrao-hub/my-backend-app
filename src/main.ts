@@ -19,11 +19,11 @@ async function bootstrap() {
   app.enableCors();
 
   // app.use(cookieParser());
-app.enableCors({
-  origin: process.env.FRONTEND_URL,
-  credentials: true,
-});
-  
+  app.enableCors({
+    origin: process.env.FRONTEND_URL,
+    credentials: true,
+  });
+
   await app.listen(port);
   console.log(`🚀 NEST Backend Started on: http://localhost:${port}`);
 }

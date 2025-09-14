@@ -207,12 +207,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pnpm-store-
       - name: Install dependencies
-        run: |
-          if [ -f pnpm-lock.yaml ] && [ -s pnpm-lock.yaml ]; then
-            pnpm install --frozen-lockfile
-          else
-            pnpm install --no-frozen-lockfile
-          fi
+        run: pnpm install
       - name: Run tests + coverage
         run: pnpm test -- --coverage --passWithNoTests
       - name: Upload coverage report

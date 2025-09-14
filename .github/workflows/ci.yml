@@ -1,11 +1,11 @@
+name: CI Pipeline
 
-
-
-
-git checkout -b add/ci-workflow
-[main]
+on:
+  push:
+    branches:
+      - main
     tags:
-      - 'v1.0.0'
+      - 'v*.*.*'
   pull_request:
     branches: [main]
   workflow_dispatch:

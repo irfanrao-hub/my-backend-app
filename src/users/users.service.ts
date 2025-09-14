@@ -1,6 +1,4 @@
-import {
-  Injectable,
-} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -54,7 +52,6 @@ export class UsersService {
     const savedUser = await this.usersRepository.save(newUser);
 
     const payload = { sub: savedUser.id, email: savedUser.email };
-    const token = this.jwtService.sign(payload);
     console.log('Payload::::::::', payload);
 
     return {

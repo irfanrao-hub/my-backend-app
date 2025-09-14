@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-      - add/ci-workflow
+      - 'add/ci-workflow' # Quote branch names with special characters
     tags:
       - 'v*.*.*'
   pull_request:
@@ -44,9 +44,9 @@ jobs:
           cache-dependency-path: package-lock.json
       - run: npm ci
       - name: Run lint
-        run: npm run lint
+        run: pnpm lint
       - name: Run format check
-        run: npm run format:check
+        run: pnpm format:check
 
   test:
     name: Test (matrix)

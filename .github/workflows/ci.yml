@@ -3,11 +3,13 @@ name: CI Pipeline
 on:
   push:
     branches:
-      - [main, add/ci-workflow]
+      - main
+      - add/ci-workflow
     tags:
       - 'v*.*.*'
   pull_request:
-    branches: [main]
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
